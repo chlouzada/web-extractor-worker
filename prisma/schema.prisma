@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Extractor {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId   String
+  title    String?
+  url      String
+  schedule Schedule
+  status   Status   @default(ENABLED)
+
+  results   Result[]
+  selectors Selector[]
+}
+
+model Result {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  value String?
+
+  extractorId String
+  selectorId  String
+  extractor   Extractor @relation(fields: [extractorId], references: [id], onDelete: Cascade)
+  selector    Selector  @relation(fields: [selectorId], references: [id], onDelete: Cascade)
+}
+
+model Selector {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  label       String?
+  selector    String
+  extractorId String
+
+  results   Result[]
+  extractor Extractor @relation(fields: [extractorId], references: [id], onDelete: Cascade)
+}
+
+enum Schedule {
+  EVERY_15_MIN
+  EVERY_HOUR
+  EVERY_DAY
+  EVERY_WEEK
+  EVERY_MONTH
+}
+
+enum Status {
+  ENABLED
+  DISABLED
+}
