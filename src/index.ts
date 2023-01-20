@@ -1,11 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { connect } from 'mongoose';
 import puppeteer from 'puppeteer';
 
-require('dotenv').config();
-
 const main = async () => {
-  console.log('running');
+  console.log('Running');
 
   const prisma = new PrismaClient();
 
@@ -15,9 +12,9 @@ const main = async () => {
     },
   });
 
-  console.log(extractors);
-
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox'],
+  });
   const page = await browser.newPage();
 
   for (const extractor of extractors) {
@@ -33,8 +30,6 @@ const main = async () => {
       values.push(value);
     }
 
-    // create many results
-
     await prisma.result.createMany({
       data: values.map((value, index) => ({
         value: value || null,
@@ -46,7 +41,7 @@ const main = async () => {
 
   await browser.close();
 
-  console.log('done');
+  console.log('Done');
 };
 
 main();
