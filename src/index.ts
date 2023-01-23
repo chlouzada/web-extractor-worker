@@ -5,7 +5,7 @@ import cron from 'node-cron';
 const prisma = new PrismaClient();
 
 const run = async (schedule: Schedule) => {
-  const executionId = [schedule, new Date().toISOString()]
+  const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
   const [extractors, browser] = await Promise.all([
@@ -25,7 +25,7 @@ const run = async (schedule: Schedule) => {
   for (const extractor of extractors) {
     const { url, selectors } = extractor;
 
-    await page.goto(url);
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
     const values = [];
     for (const selector of selectors) {
