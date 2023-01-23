@@ -1,5 +1,5 @@
 import { PrismaClient, Schedule } from '@prisma/client';
-import { getBrowser, closeBrowser } from './pptr';
+import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
 
 const prisma = new PrismaClient();
@@ -8,7 +8,7 @@ const run = async (schedule: Schedule) => {
   const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
-  const [extractors, browser] = await Promise.all([
+  const [extractors, page] = await Promise.all([
     prisma.extractor.findMany({
       where: {
         schedule,
@@ -17,10 +17,8 @@ const run = async (schedule: Schedule) => {
         selectors: true,
       },
     }),
-    getBrowser(),
+    getPage(),
   ]);
-
-  const page = await browser.newPage();
 
   for (const extractor of extractors) {
     const { url, selectors } = extractor;
@@ -36,7 +34,6 @@ const run = async (schedule: Schedule) => {
         )
         .catch((err) => console.log(err));
       values.push(value);
-
 
       // print page texts
       const text = await page.evaluate(() => document.body.textContent);
@@ -55,15 +52,16 @@ const run = async (schedule: Schedule) => {
   }
 
   // close page
-  await page.close();
+  await closePage(page);
 
   // close browser
-  await closeBrowser();
+  // await closeBrowser();
 
   console.log('Done', ...executionId);
 };
 
-cron.schedule('* * * * *', () => run(Schedule.EVERY_15_MIN));
+run(Schedule.EVERY_15_MIN)
+// cron.schedule('* * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('*/15 * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('0 * * * *', () => run(Schedule.EVERY_HOUR));
 // cron.schedule('0 0 * * *', () => run(Schedule.EVERY_DAY));

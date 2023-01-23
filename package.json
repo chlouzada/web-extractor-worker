@@ -25,6 +25,9 @@
     "mongoose": "^6.5.2",
     "node-cron": "^3.0.2",
     "prisma": "^4.9.0",
-    "puppeteer": "^19.5.2"
+    "puppeteer": "^19.6.0",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-adblocker": "^2.13.5",
+    "puppeteer-extra-plugin-stealth": "^2.11.1"
   }
 }
