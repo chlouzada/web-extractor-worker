@@ -1,7 +1,7 @@
 import puppeteer, { Browser, PuppeteerLaunchOptions } from 'puppeteer';
 
 const config: PuppeteerLaunchOptions = {
-  headless: true,
+  // headless: true,
   args: ['--no-sandbox'],
 };
 
