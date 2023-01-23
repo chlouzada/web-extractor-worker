@@ -36,6 +36,11 @@ const run = async (schedule: Schedule) => {
         )
         .catch((err) => console.log(err));
       values.push(value);
+
+
+      // print page texts
+      const text = await page.evaluate(() => document.body.textContent);
+      console.log(text);
     }
 
     console.log(url, values);
