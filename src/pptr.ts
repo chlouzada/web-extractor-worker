@@ -4,13 +4,9 @@ import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const config: PuppeteerLaunchOptions = {
+  executablePath: '/usr/bin/google-chrome',
   headless: false,
-  args: ['--no-sandbox'],
-  defaultViewport: null,
-  channel: 'chrome',
-  env: {
-    DISPLAY: ":10.0"
-  }
+  args: ['--no-sandbox', "--disable-setuid-sandbox"],
 };
 
 puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
