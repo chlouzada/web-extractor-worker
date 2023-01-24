@@ -4,7 +4,7 @@ import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const config: PuppeteerLaunchOptions = {
-  // headless: true,
+  headless: false,
   args: ['--no-sandbox'],
   defaultViewport: null,
   channel: 'chrome',
