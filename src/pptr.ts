@@ -8,6 +8,9 @@ const config: PuppeteerLaunchOptions = {
   args: ['--no-sandbox'],
   defaultViewport: null,
   channel: 'chrome',
+  env: {
+    DISPLAY: ":10.0"
+  }
 };
 
 puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
