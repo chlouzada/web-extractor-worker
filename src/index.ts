@@ -1,27 +1,19 @@
 import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
+import { ExtractorModel } from './model/extractor.model';
 
 import 'dotenv/config';
 
-console.log(process.env);
+import mongoose from 'mongoose';
+
+mongoose.connect(process.env.DATABASE_URL!)
 
 const run = async (schedule: any) => {
   const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
   const [extractors, page] = await Promise.all([
-    // getExtractorsWithSelectors(schedule),
-    [
-      {
-        url: 'https://www.kabum.com.br/produto/377636/placa-de-video-rtx-3070-msi-ventus-3x-plus-nvidia-geforce-8gb-gddr6-lhr-dlss-ray-tracing-geforce-rtx-3070-ventus-3x-plus-8g-oc-lhr',
-        selectors: [
-          {
-            selector:
-              '#blocoValores > div.sc-e4612f91-3.cFkEDy > div.sc-e4612f91-1.fpeVbY > h4',
-          },
-        ],
-      },
-    ],
+    ExtractorModel.find({ schedule }).populate('selectors'),
     getPage(),
   ]);
 
@@ -46,7 +38,7 @@ const run = async (schedule: any) => {
       console.log(text);
     }
 
-    console.log(values)
+    console.log(values);
     // await createResults(values, extractor);
   }
 
