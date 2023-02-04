@@ -4,9 +4,11 @@ const puppeteer = require('puppeteer-core');
 // import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const config: any = {
-  // executablePath: '/usr/bin/chromium-browser',
-  headless: false,
-  args: ['--no-sandbox', "--disable-setuid-sandbox"],
+  headless: true,
+  args: [
+    "--no-sandbox",
+    "--disable-gpu",
+  ]
 };
 
 // puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
