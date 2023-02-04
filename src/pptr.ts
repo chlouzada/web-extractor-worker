@@ -4,7 +4,7 @@ import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const config: PuppeteerLaunchOptions = {
-  executablePath: '/usr/bin/google-chrome',
+  executablePath: '/usr/bin/chromium-browser',
   headless: false,
   args: ['--no-sandbox', "--disable-setuid-sandbox"],
 };
