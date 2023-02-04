@@ -1,18 +1,27 @@
 import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
-import { getExtractorsWithSelectors } from './queries/getExtractorsWithSelectors';
-import { createResults } from './queries/createResults';
 
-import "dotenv/config"
+import 'dotenv/config';
 
-console.log(process.env)
+console.log(process.env);
 
 const run = async (schedule: any) => {
   const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
   const [extractors, page] = await Promise.all([
-    getExtractorsWithSelectors(schedule),
+    // getExtractorsWithSelectors(schedule),
+    [
+      {
+        url: 'https://www.kabum.com.br/produto/377636/placa-de-video-rtx-3070-msi-ventus-3x-plus-nvidia-geforce-8gb-gddr6-lhr-dlss-ray-tracing-geforce-rtx-3070-ventus-3x-plus-8g-oc-lhr',
+        selectors: [
+          {
+            selector:
+              '#blocoValores > div.sc-e4612f91-3.cFkEDy > div.sc-e4612f91-1.fpeVbY > h4',
+          },
+        ],
+      },
+    ],
     getPage(),
   ]);
 
@@ -25,10 +34,11 @@ const run = async (schedule: any) => {
     for (const selector of selectors) {
       const value = await page
         .evaluate(
-          (selector:any) => document.querySelector(selector.selector)?.textContent,
+          (selector: any) =>
+            document.querySelector(selector.selector)?.textContent,
           selector
         )
-        .catch((err:any) => console.log(err));
+        .catch((err: any) => console.log(err));
       values.push(value);
 
       // print page texts
@@ -36,7 +46,8 @@ const run = async (schedule: any) => {
       console.log(text);
     }
 
-    await createResults(values, extractor);
+    console.log(values)
+    // await createResults(values, extractor);
   }
 
   // close page
@@ -56,7 +67,7 @@ enum Schedule {
   EVERY_MONTH = 'EVERY_MONTH',
 }
 
-run(Schedule.EVERY_15_MIN)
+run(Schedule.EVERY_15_MIN);
 // cron.schedule('* * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('*/15 * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('0 * * * *', () => run(Schedule.EVERY_HOUR));

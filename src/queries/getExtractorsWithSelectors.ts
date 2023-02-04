@@ -1,16 +1,20 @@
 import { Client } from 'pg';
+import { getClient } from '../pg';
 
-const client = new Client();
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+});
 
 export async function getExtractorsWithSelectors(schedule: string) {
   try {
-    await client.connect();
+    const client = await getClient();
+
 
     const res = await client.query(`
       SELECT *
-      FROM extractor
-      JOIN selector ON selector.extractor_id = extractor.id
-      WHERE extractor.schedule = $1
+      FROM Extractor
+      JOIN Selector ON Selector.extractorId = Extractor.id
+      WHERE Extractor.schedule = $1
     `, [schedule]);
 
     return res.rows;

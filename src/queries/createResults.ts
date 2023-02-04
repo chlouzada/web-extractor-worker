@@ -1,10 +1,12 @@
 import { Client } from 'pg';
+import { getClient } from '../pg';
 
-const client = new Client();
+
 
 export async function createResults(values: any[], extractor: any) {
   try {
-    await client.connect();
+const client = await getClient();
+
 
     const data = values.map((value, index) => [
       value || null,
