@@ -1,19 +1,43 @@
 import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
 import { ExtractorModel } from './model/extractor.model';
+import { SelectorModel } from './model/selector.model';
 
 import 'dotenv/config';
 
-import mongoose from 'mongoose';
+import { MongoClient } from 'mongodb';
 
-mongoose.connect(process.env.DATABASE_URL!)
+const client = new MongoClient(process.env.DATABASE_URL!);
+const ExtractorCollection = client.db('web-extractor').collection('Extractor');
+const SelectorCollection = client.db('web-extractor').collection('Selector');
+
+const getExtractorsWithSelectors = async (schedule: any) => {
+  const extractors = await ExtractorCollection.find({ schedule }).toArray();
+  const ids = extractors.map((extractor) => extractor._id);
+
+  const selectors = await SelectorCollection.find({
+    extractorId: { $in: ids },
+  }).toArray();
+
+  console.log(selectors);
+
+  extractors.map((extractor) => {
+    extractor.selectors = selectors.filter(
+      (selector) => selector.extractorId.toString() === extractor._id.toString()
+    );
+  });
+
+  return extractors;
+};
 
 const run = async (schedule: any) => {
+  await client.connect();
+
   const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
   const [extractors, page] = await Promise.all([
-    ExtractorModel.find({ schedule }).populate('selectors'),
+    getExtractorsWithSelectors(schedule),
     getPage(),
   ]);
 
@@ -59,7 +83,7 @@ enum Schedule {
   EVERY_MONTH = 'EVERY_MONTH',
 }
 
-run(Schedule.EVERY_15_MIN);
+run(Schedule.EVERY_HOUR);
 // cron.schedule('* * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('*/15 * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('0 * * * *', () => run(Schedule.EVERY_HOUR));
