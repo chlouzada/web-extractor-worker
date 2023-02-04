@@ -1,22 +1,19 @@
 import { PrismaClient, Schedule } from '@prisma/client';
 import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
+import { getExtractorsWithSelectors } from './queries/getExtractorsWithSelectors';
+import { createResults } from './queries/createResults';
 
-const prisma = new PrismaClient();
+import "dotenv/config"
+
+console.log(process.env)
 
 const run = async (schedule: Schedule) => {
   const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
   const [extractors, page] = await Promise.all([
-    prisma.extractor.findMany({
-      where: {
-        schedule,
-      },
-      include: {
-        selectors: true,
-      },
-    }),
+    getExtractorsWithSelectors(schedule),
     getPage(),
   ]);
 
@@ -40,15 +37,7 @@ const run = async (schedule: Schedule) => {
       console.log(text);
     }
 
-    console.log(url, values);
-
-    prisma.result.createMany({
-      data: values.map((value, index) => ({
-        value: value || null,
-        extractorId: extractor.id,
-        selectorId: extractor.selectors[index].id,
-      })),
-    });
+    await createResults(values, extractor);
   }
 
   // close page
