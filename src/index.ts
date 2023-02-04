@@ -25,10 +25,10 @@ const run = async (schedule: any) => {
     for (const selector of selectors) {
       const value = await page
         .evaluate(
-          (selector) => document.querySelector(selector.selector)?.textContent,
+          (selector:any) => document.querySelector(selector.selector)?.textContent,
           selector
         )
-        .catch((err) => console.log(err));
+        .catch((err:any) => console.log(err));
       values.push(value);
 
       // print page texts

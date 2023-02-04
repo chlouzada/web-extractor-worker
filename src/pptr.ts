@@ -1,19 +1,19 @@
-import { Browser, Page, PuppeteerLaunchOptions } from 'puppeteer';
-import puppeteer from 'puppeteer-extra';
-import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+const puppeteer = require('puppeteer-core');
+// import puppeteer from 'puppeteer-extra';
+// import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
+// import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-const config: PuppeteerLaunchOptions = {
-  executablePath: '/usr/bin/chromium-browser',
+const config: any = {
+  // executablePath: '/usr/bin/chromium-browser',
   headless: false,
   args: ['--no-sandbox', "--disable-setuid-sandbox"],
 };
 
-puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
+// puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
 
 let instances = 0;
 
-let browser: Browser | null = null;
+let browser: any | null = null;
 
 export const getPage = async () => {
   if (!browser) {
@@ -28,7 +28,7 @@ export const getPage = async () => {
   return page;
 };
 
-export const closePage = async (page: Page) => {
+export const closePage = async (page: any) => {
   instances--;
   await page.close();
   if (instances === 0) {
