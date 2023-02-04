@@ -1,7 +1,5 @@
 import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
-import { ExtractorModel } from './model/extractor.model';
-import { SelectorModel } from './model/selector.model';
 
 import 'dotenv/config';
 
@@ -10,6 +8,7 @@ import { MongoClient } from 'mongodb';
 const client = new MongoClient(process.env.DATABASE_URL!);
 const ExtractorCollection = client.db('web-extractor').collection('Extractor');
 const SelectorCollection = client.db('web-extractor').collection('Selector');
+const ResultCollection = client.db('web-extractor').collection('Result');
 
 const getExtractorsWithSelectors = async (schedule: any) => {
   const extractors = await ExtractorCollection.find({ schedule }).toArray();
@@ -28,6 +27,16 @@ const getExtractorsWithSelectors = async (schedule: any) => {
   });
 
   return extractors;
+};
+
+const createResults = async (values: any, extractor: any) => {
+  const { _id } = extractor;
+  const results = values.map((value: any, index: any) => ({
+    value,
+    selectorId: extractor.selectors[index]._id,
+    extractorId: _id,
+  }));
+  await ResultCollection.insertMany(results);
 };
 
 const run = async (schedule: any) => {
@@ -62,8 +71,7 @@ const run = async (schedule: any) => {
       console.log(text);
     }
 
-    console.log(values);
-    // await createResults(values, extractor);
+    await createResults(values, extractor);
   }
 
   // close page
