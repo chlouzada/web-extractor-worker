@@ -1,4 +1,3 @@
-import { PrismaClient, Schedule } from '@prisma/client';
 import { getPage, closePage } from './pptr';
 import cron from 'node-cron';
 import { getExtractorsWithSelectors } from './queries/getExtractorsWithSelectors';
@@ -8,7 +7,7 @@ import "dotenv/config"
 
 console.log(process.env)
 
-const run = async (schedule: Schedule) => {
+const run = async (schedule: any) => {
   const executionId = [schedule, new Date().toISOString()];
   console.log('Running', ...executionId);
 
@@ -48,6 +47,14 @@ const run = async (schedule: Schedule) => {
 
   console.log('Done', ...executionId);
 };
+
+enum Schedule {
+  EVERY_15_MIN = 'EVERY_15_MIN',
+  EVERY_HOUR = 'EVERY_HOUR',
+  EVERY_DAY = 'EVERY_DAY',
+  EVERY_WEEK = 'EVERY_WEEK',
+  EVERY_MONTH = 'EVERY_MONTH',
+}
 
 run(Schedule.EVERY_15_MIN)
 // cron.schedule('* * * * *', () => run(Schedule.EVERY_15_MIN));
