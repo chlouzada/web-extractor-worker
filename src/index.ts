@@ -35,6 +35,7 @@ const createResults = async (values: any, extractor: any) => {
     value,
     selectorId: extractor.selectors[index]._id,
     extractorId: _id,
+    createdAt: new Date(),
   }));
   await ResultCollection.insertMany(results);
 };
@@ -92,7 +93,6 @@ enum Schedule {
 }
 
 run(Schedule.EVERY_HOUR);
-// cron.schedule('* * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('*/15 * * * *', () => run(Schedule.EVERY_15_MIN));
 // cron.schedule('0 * * * *', () => run(Schedule.EVERY_HOUR));
 // cron.schedule('0 0 * * *', () => run(Schedule.EVERY_DAY));
