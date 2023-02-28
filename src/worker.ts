@@ -115,6 +115,7 @@ const preview = async () => {
       { _id: preview._id },
       {
         $set: {
+          updatedAt: new Date(),
           done: true,
           values,
         },
