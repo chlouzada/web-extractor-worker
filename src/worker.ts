@@ -7,6 +7,7 @@ import {
   client,
   PreviewCollection,
 } from './db';
+import { ObjectId } from 'mongodb';
 
 const getExtractorsWithSelectors = async (schedule: any) => {
   const extractors = await ExtractorCollection.find({ schedule }).toArray();
@@ -85,7 +86,12 @@ const preview = async () => {
 
   const started = new Date();
 
-  const previews = await PreviewCollection.find({
+  const previews = await PreviewCollection.find<{
+    _id: ObjectId;
+    url: string;
+    selectors: string[];
+    createdAt: Date;
+  }>({
     done: false,
   }).toArray();
 
@@ -94,8 +100,8 @@ const preview = async () => {
 
   const page = await getPage();
 
-  for (const preview of previews) {
-    const { url, selectors } = preview;
+  for (const item of previews) {
+    const { url, selectors } = item;
 
     await page.goto(url, { waitUntil: 'networkidle2' });
 
@@ -112,7 +118,7 @@ const preview = async () => {
     }
 
     await PreviewCollection.updateOne(
-      { _id: preview._id },
+      { _id: item._id },
       {
         $set: {
           updatedAt: new Date(),
