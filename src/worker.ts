@@ -63,12 +63,12 @@ const run = async (schedule: any) => {
           selector
         )
         .catch((err: any) => console.log(err));
-      values.push(value);
+      values.push(String(value));
 
       if (!!value) {
         const text = await page.evaluate(() => document.body.textContent);
         console.log('No value found, printing text');
-        console.log(text)
+        console.log(text);
       }
     }
 
@@ -108,7 +108,7 @@ const preview = async () => {
           selector
         )
         .catch((err: any) => console.log(err));
-      values.push(value);
+      values.push(String(value));
     }
 
     await PreviewCollection.updateOne(
